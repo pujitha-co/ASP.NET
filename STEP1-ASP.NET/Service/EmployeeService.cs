@@ -10,7 +10,7 @@ namespace EmployeeManagementAPI.Services
             {
                 Id = 1,
                 Name = "Pujitha",
-                Department = "IT",
+               
                 Salary = 45000
             },
 
@@ -18,14 +18,14 @@ namespace EmployeeManagementAPI.Services
             {
                 Id = 2,
                 Name = "Rahul",
-                Department = "HR",
+               
                 Salary = 35000
             },
             new Employee
             {
                 Id = 3,
                 Name = "Priya",
-                Department = "Testing",
+                
                 Salary = 40000
             }
         };
@@ -65,7 +65,7 @@ namespace EmployeeManagementAPI.Services
             }
 
             employee.Name = updatedEmployee.Name;
-            employee.Department = updatedEmployee.Department;
+            
             employee.Salary = updatedEmployee.Salary;
 
             return employee;
