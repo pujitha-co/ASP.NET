@@ -8,74 +8,64 @@ namespace EmployeeManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EmployeeController : ControllerBase
+
+
+    public class PracticeController : ControllerBase
     {
-        private readonly IEmployeeService _service;
+        private readonly HttpClient _client;
 
-        // Constructor Injection
-        public EmployeeController(IEmployeeService service)
+        public PracticeController(HttpClient client)
         {
-            _service = service;
+            _client = client;
         }
 
-        // GET: api/employee
-        [HttpGet]
-        public IActionResult GetAllEmployees()
+        // 1. HttpClient
+        [HttpGet("external-users")]
+        public async Task<IActionResult> GetExternalUsers()
         {
-            var employees = _service.GetAllEmployees();
+            var response = await _client.GetAsync(
+                "https://dummyjson.com/users");
 
-            return Ok(employees);
-        }
-
-        // GET: api/employee/1
-        [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(int id)
-        {
-            var employee = _service.GetEmployeeById(id);
-
-            if (employee == null)
+            if (!response.IsSuccessStatusCode)
             {
-                return NotFound("Employee Not Found");
+                return StatusCode((int)response.StatusCode);
             }
 
-            return Ok(employee);
+            var data = await response.Content.ReadAsStringAsync();
+
+            return Content(data, "application/json");
         }
 
-        // POST: api/employee
-        [HttpPost]
-        public IActionResult AddEmployee(Employee employee)
+        // 2. HttpRequest
+        [HttpGet("request-info")]
+        public IActionResult GetRequestInfo()
         {
-            var result = _service.AddEmployee(employee);
+            var method = HttpContext.Request.Method;
 
-            return Ok(result);
-        }
+            var path = HttpContext.Request.Path;
 
-        // PUT: api/employee/1
-        [HttpPut("{id}")]
-        public IActionResult UpdateEmployee(int id, Employee employee)
-        {
-            var result = _service.UpdateEmployee(id, employee);
+            var city = HttpContext.Request.Query["city"];
 
-            if (result == "Employee Not Found")
+            return Ok(new
             {
-                return NotFound(result);
-            }
-
-            return Ok(result);
+                Method = method,
+                Path = path,
+                City = city.ToString()
+            });
         }
 
-        // DELETE: api/employee/1
-        [HttpDelete("{id}")]
-        public IActionResult DeleteEmployee(int id)
+        // 3. HttpResponse
+        [HttpGet("response-info")]
+        public IActionResult GetResponseInfo()
         {
-            var result = _service.DeleteEmployee(id);
+            HttpContext.Response.Headers["Company"] =
+                "ABC Technologies";
 
-            if (result == "Employee Not Found")
+            return Ok(new
             {
-                return NotFound(result);
-            }
-
-            return Ok(result);
+                Message = "Response sent successfully",
+                Status = 200
+            });
         }
     }
 }
