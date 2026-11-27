@@ -1,107 +1,69 @@
-﻿using STEP1_ASP.NET.Models;
+﻿using STEP1_ASP.NET.Interface;
+using STEP1_ASP.NET.Models;
 
 namespace EmployeeManagementAPI.Services
 {
-    public class EmployeeService
+
+    public class EmployeeService : IEmployeeService
     {
         private List<Employee> employees = new List<Employee>()
         {
-            new Employee
-            {
-                Id = 1,
-                Name = "Pujitha",
-               
-                Salary = 45000
-            },
-
-            new Employee
-            {
-                Id = 2,
-                Name = "Rahul",
-               
-                Salary = 35000
-            },
-            new Employee
-            {
-                Id = 3,
-                Name = "Priya",
-                
-                Salary = 40000
-            }
+            new Employee { Id = 1, Name = "Rahul", Department = "IT", Salary = 40000 },
+            new Employee { Id = 2, Name = "Priya", Department = "HR", Salary = 35000 },
+            new Employee { Id = 3, Name = "Arun", Department = "Finance", Salary = 45000 }
         };
 
-        // GET: Get all employees
-        public List<Employee> GetEmployees()
+        public List<Employee> GetAllEmployees()
         {
             return employees;
         }
 
-        // GET: Get employee by ID
-        public Employee? GetEmployeeById(int id)
+        public Employee GetEmployeeById(int id)
         {
             return employees.FirstOrDefault(e => e.Id == id);
         }
 
-        // POST: Add employee
-        public Employee AddEmployee(Employee employee)
+        public string AddEmployee(Employee employee)
         {
-            employee.Id = employees.Count == 0
-                ? 1
-                : employees.Max(e => e.Id) + 1;
+            employee.Id = employees.Count + 1;
 
             employees.Add(employee);
 
-            return employee;
+            return "Employee Added Successfully";
         }
 
-        // PUT: Update complete employee
-        public Employee? UpdateEmployee(int id, Employee updatedEmployee)
+        public string UpdateEmployee(int id, Employee employee)
         {
-            var employee = employees.FirstOrDefault(e => e.Id == id);
+            var existingEmployee = employees.FirstOrDefault(e => e.Id == id);
 
-            if (employee == null)
+            if (existingEmployee == null)
             {
-                return null;
+                return "Employee Not Found";
             }
 
-            employee.Name = updatedEmployee.Name;
-            
-            employee.Salary = updatedEmployee.Salary;
+            existingEmployee.Name = employee.Name;
+            existingEmployee.Department = employee.Department;
+            existingEmployee.Salary = employee.Salary;
 
-            return employee;
+            return "Employee Updated Successfully";
         }
 
-        // PATCH: Update only salary
-        public Employee? UpdateSalary(int id, decimal salary)
+        public string DeleteEmployee(int id)
         {
             var employee = employees.FirstOrDefault(e => e.Id == id);
 
             if (employee == null)
             {
-                return null;
-            }
-
-            employee.Salary = salary;
-
-            return employee;
-        }
-
-        // DELETE: Delete employee
-        public bool DeleteEmployee(int id)
-        {
-            var employee = employees.FirstOrDefault(e => e.Id == id);
-
-            if (employee == null)
-            {
-                return false;
+                return "Employee Not Found";
             }
 
             employees.Remove(employee);
 
-            return true;
+            return "Employee Deleted Successfully";
         }
     }
 }
+
         
 
        
